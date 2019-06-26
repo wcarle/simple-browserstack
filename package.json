@@ -1,6 +1,6 @@
 {
   "name": "simple-browserstack",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Simple browserstack node js tests",
   "main": "index.js",
   "scripts": {
