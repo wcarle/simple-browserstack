@@ -17,7 +17,7 @@ exports.runTest = async function(theTest, config) {
         driver = await new Builder().forBrowser('chrome').build();
     }
     try {
-        await theTest();
+        await theTest(driver);
 
         var messagePassed = config.messagePassed ? config.messagePassed : 'Test Passed!';
         sendNotification(config, true, messagePassed);
