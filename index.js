@@ -5,6 +5,7 @@ const {Builder, By, Key, until} = require('selenium-webdriver');
 exports.runTest = async function(theTest, config) {
     var browserstack = !config.local;
     var sessionData = null;
+    var result = '';
     if (browserstack) {
         driver = await new Builder().
         usingServer('http://hub-cloud.browserstack.com/wd/hub').
@@ -21,11 +22,15 @@ exports.runTest = async function(theTest, config) {
 
         var messagePassed = config.messagePassed ? config.messagePassed : 'Test Passed!';
         sendNotification(config, true, messagePassed);
+        result = 'pass';
     } catch (ex) {
         var messageFailed = config.messageFailed ? config.messageFailed : 'Test Failed';
         sendNotification(config, false, messageFailed + ' - ' + ex.message);
+        result = 'fail: ' + ex.message;
     } finally {
         await driver.quit();
+        console.log('about to return');
+        return result;
     }
 };
 
@@ -42,10 +47,12 @@ function sendNotification(config, pass, message) {
         });
     }
     if (config.slack && config.slack.webhook) {
-        request({
-            uri: config.slack.webhook,
-            method:'POST',
-            json:{ 'text': message }
-        });
+        if (typeof config.slack.events === 'undefined' || config.slack.events.indexOf(status) >= 0) {
+            request({
+                uri: config.slack.webhook,
+                method:'POST',
+                json:{ 'text': message }
+            });
+        }
     }
 }
