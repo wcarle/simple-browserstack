@@ -29,7 +29,6 @@ exports.runTest = async function(theTest, config) {
         result = 'fail: ' + ex.message;
     } finally {
         await driver.quit();
-        console.log('about to return');
         return result;
     }
 };
